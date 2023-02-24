@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Application;
 
-public class Order
+public abstract class Order
 {
     public Order()
     {
         Dishes = new List<int>();
     }
+    public abstract Task<List<Dish>> GetDishes();
     protected abstract bool IsMultipleAllowed(int order);
     protected abstract string GetOrderName(int order);
 
@@ -35,7 +39,7 @@ public class MorningOrder:Order{
     {
 
     }
-    public Task<List<Dish>> GetDishes()
+    public override Task<List<Dish>> GetDishes()
     {
         var returnValue = new List<Dish>();
         Dishes.Sort();
@@ -43,7 +47,7 @@ public class MorningOrder:Order{
 
         return Task.FromResult(returnValue);
     }
-    public string GetOrderName(int order)
+    protected override string GetOrderName(int order)
     {
         switch (order)
         {
@@ -57,7 +61,8 @@ public class MorningOrder:Order{
                 throw new ApplicationException("Order does not exist");
         }
     }
-    private bool IsMultipleAllowed(int order)
+
+    protected override bool IsMultipleAllowed(int order)
     {
         switch (order)
         {
@@ -73,15 +78,15 @@ public class EveningOrder:Order{
     {
         
     }
-    public Task<List<Dish>> GetDishes()
+    public override Task<List<Dish>> GetDishes()
     {
         var returnValue = new List<Dish>();
         Dishes.Sort();
-        foreach (var dishType in order.Dishes) AddOrderToList(dishType, returnValue);
+        foreach (var dishType in Dishes) AddOrderToList(dishType, returnValue);
 
         return Task.FromResult(returnValue);
     }
-    public string GetOrderName(int order)
+    protected override string GetOrderName(int order)
     {
         switch (order)
         {
@@ -97,7 +102,7 @@ public class EveningOrder:Order{
                 throw new ApplicationException("Order does not exist");
         }
     }
-    private bool IsMultipleAllowed(int order)
+    protected override bool IsMultipleAllowed(int order)
     {
         switch (order)
         {
@@ -111,13 +116,13 @@ public class EveningOrder:Order{
 
 public class OrderFactory
 {
-    public static CreateOrder(string mealType){
+    public static Order CreateOrder(string mealType){
         switch (mealType)
         {
             case "morning":
-                return MorningOrder();
+                return new MorningOrder();
             case "evening":
-                return EveningOrder();
+                return new EveningOrder();
             default:
                 throw new ApplicationException("Order does not exist");
         }

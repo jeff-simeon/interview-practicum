@@ -17,7 +17,7 @@ public class Server : IServer
         try
         {
             
-            var order = ParseOrder(unparsedOrder);
+            var order = ParseMealTypeAndOrder(unparsedOrder);
             var dishes = _dishManager.GetDishes(order).Result;
             var returnValue = FormatOutput(dishes);
             return Task.FromResult(returnValue);
@@ -29,30 +29,30 @@ public class Server : IServer
     }
 
     private Order ParseMealTypeAndOrder(string unparsedOrder){
-        var orderItems = unparsedOrder.Split(',')[0];
+        var orderItems = unparsedOrder.Split(',');
         var order = OrderFactory.CreateOrder(orderItems[0]);
         for (int i = 1; i<orderItems.Length; i++){
-            var parsedOrder = int.Parse(orderItems[i]);
+            var parsedOrder = int.Parse(orderItems[i].Trim());
             order.Dishes.Add(parsedOrder);
         }
         return order;
     }
-    private Order ParseOrder(string unparsedOrder)
-    {
-        var returnValue = new Order
-        {
-            Dishes = new List<int>()
-        };
+    // private Order ParseOrder(string unparsedOrder)
+    // {
+    //     var returnValue = new Order
+    //     {
+    //         Dishes = new List<int>()
+    //     };
 
-        var orderItems = unparsedOrder.Split(',');
-        foreach (var orderItem in orderItems)
-        {
-            var parsedOrder = int.Parse(orderItem);
-            returnValue.Dishes.Add(parsedOrder);
-        }
+    //     var orderItems = unparsedOrder.Split(',');
+    //     foreach (var orderItem in orderItems)
+    //     {
+    //         var parsedOrder = int.Parse(orderItem);
+    //         returnValue.Dishes.Add(parsedOrder);
+    //     }
 
-        return returnValue;
-    }
+    //     return returnValue;
+    // }
 
     private string FormatOutput(List<Dish> dishes)
     {

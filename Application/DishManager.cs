@@ -14,6 +14,6 @@ public class DishManager : IDishManager
   /// <returns></returns>
   public Task<List<Dish>> GetDishes(Order order)
     {
-        return Task.FromResult(order.GetDishes());
+        return order.GetDishes();
     }
 }
