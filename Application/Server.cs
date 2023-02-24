@@ -16,6 +16,7 @@ public class Server : IServer
     {
         try
         {
+            
             var order = ParseOrder(unparsedOrder);
             var dishes = _dishManager.GetDishes(order).Result;
             var returnValue = FormatOutput(dishes);
@@ -27,7 +28,15 @@ public class Server : IServer
         }
     }
 
-
+    private Order ParseMealTypeAndOrder(string unparsedOrder){
+        var orderItems = unparsedOrder.Split(',')[0];
+        var order = OrderFactory.CreateOrder(orderItems[0]);
+        for (int i = 1; i<orderItems.Length; i++){
+            var parsedOrder = int.Parse(orderItems[i]);
+            order.Dishes.Add(parsedOrder);
+        }
+        return order;
+    }
     private Order ParseOrder(string unparsedOrder)
     {
         var returnValue = new Order
